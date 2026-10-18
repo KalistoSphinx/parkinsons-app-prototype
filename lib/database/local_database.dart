@@ -1,199 +1,77 @@
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
+import 'dart:convert';
+
+import 'package:hive_ce/hive.dart';
+import 'package:path_provider/path_provider.dart';
+
 import '../models/patient.dart';
-import '../models/session.dart';
-import '../models/feature_measurement.dart';
-import '../models/baseline.dart';
+import '../models/session_feature_vector.dart';
 
+/// Hive CE NoSQL profile store. Processed time-series feature documents live on
+/// the Python service so they remain available while the Android app is closed.
 class LocalDatabase {
-  static final LocalDatabase instance = LocalDatabase._init();
-  static Database? _database;
+  static final LocalDatabase instance = LocalDatabase._();
+  LocalDatabase._();
 
-  LocalDatabase._init();
+  Future<void>? _initializing;
+  late Box<String> _patients;
+  late Box<String> _features;
+  late Box<String> _syncState;
 
-  Future<Database> get database async {
-    if (_database != null) return _database!;
-    _database = await _initDB('parkinsons_prototype.db');
-    return _database!;
+  Future<void> initialize() => _initializing ??= _open();
+
+  Future<void> _open() async {
+    final directory = await getApplicationSupportDirectory();
+    Hive.init(directory.path);
+    _patients = await Hive.openBox<String>('patients');
+    _features = await Hive.openBox<String>('session_features');
+    _syncState = await Hive.openBox<String>('sync_state');
   }
 
-  Future<Database> _initDB(String filePath) async {
-    final dbPath = await getDatabasesPath();
-    final path = join(dbPath, filePath);
+  Future<void> _ready() => initialize();
 
-    return await openDatabase(
-      path,
-      version: 1,
-      onCreate: _createDB,
-    );
-  }
-
-  Future _createDB(Database db, int version) async {
-    await db.execute('''
-      CREATE TABLE patients (
-        id TEXT PRIMARY KEY,
-        name TEXT NOT NULL,
-        createdAt TEXT NOT NULL
-      )
-    ''');
-
-    await db.execute('''
-      CREATE TABLE sessions (
-        id TEXT PRIMARY KEY,
-        patientId TEXT NOT NULL,
-        type TEXT NOT NULL,
-        startTime TEXT NOT NULL,
-        endTime TEXT,
-        FOREIGN KEY (patientId) REFERENCES patients (id)
-      )
-    ''');
-
-    await db.execute('''
-      CREATE TABLE feature_measurements (
-        id TEXT PRIMARY KEY,
-        sessionId TEXT NOT NULL,
-        patientId TEXT NOT NULL,
-        timestamp TEXT NOT NULL,
-        featureName TEXT NOT NULL,
-        value REAL NOT NULL,
-        FOREIGN KEY (sessionId) REFERENCES sessions (id),
-        FOREIGN KEY (patientId) REFERENCES patients (id)
-      )
-    ''');
-
-    // Indexes for querying efficiency
-    await db.execute('CREATE INDEX idx_measurements_patient_feature ON feature_measurements (patientId, featureName)');
-    await db.execute('CREATE INDEX idx_measurements_session ON feature_measurements (sessionId)');
-
-    await db.execute('''
-      CREATE TABLE baselines (
-        id TEXT PRIMARY KEY,
-        patientId TEXT NOT NULL,
-        featureName TEXT NOT NULL,
-        mean REAL NOT NULL,
-        median REAL NOT NULL,
-        std REAL NOT NULL,
-        min REAL NOT NULL,
-        max REAL NOT NULL,
-        p05 REAL NOT NULL,
-        p25 REAL NOT NULL,
-        p75 REAL NOT NULL,
-        p95 REAL NOT NULL,
-        sampleCount INTEGER NOT NULL,
-        lastUpdated TEXT NOT NULL,
-        FOREIGN KEY (patientId) REFERENCES patients (id)
-      )
-    ''');
-    await db.execute('CREATE UNIQUE INDEX idx_baseline_patient_feature ON baselines (patientId, featureName)');
-  }
-
-  // --- Patients ---
   Future<void> createPatient(Patient patient) async {
-    final db = await instance.database;
-    await db.insert('patients', patient.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    await _ready();
+    await _patients.put(patient.id, jsonEncode(patient.toMap()));
   }
 
   Future<List<Patient>> getPatients() async {
-    final db = await instance.database;
-    final result = await db.query('patients');
-    return result.map((json) => Patient.fromMap(json)).toList();
+    await _ready();
+    return _patients.values
+        .map((value) => Patient.fromMap(jsonDecode(value) as Map<String, dynamic>))
+        .toList();
   }
 
-  // --- Sessions ---
-  Future<void> createSession(Session session) async {
-    final db = await instance.database;
-    await db.insert('sessions', session.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+  Future<void> saveFeatureVector(SessionFeatureVector vector) async {
+    await _ready();
+    await _features.put(vector.sessionId, jsonEncode(vector.toMap()));
+    final key = 'feature-cursor:${vector.patientId}';
+    final cursor = int.tryParse(_syncState.get(key) ?? '') ?? 0;
+    final timestamp = vector.timestamp.millisecondsSinceEpoch;
+    if (timestamp > cursor) await _syncState.put(key, '$timestamp');
   }
 
-  Future<void> updateSession(Session session) async {
-    final db = await instance.database;
-    await db.update(
-      'sessions',
-      session.toMap(),
-      where: 'id = ?',
-      whereArgs: [session.id],
-    );
+  Future<List<SessionFeatureVector>> getFeatureVectors(String patientId) async {
+    await _ready();
+    final vectors = _features.values
+        .map((value) => SessionFeatureVector.fromMap(jsonDecode(value) as Map<String, dynamic>))
+        .where((vector) => vector.patientId == patientId)
+        .toList()
+      ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
+    return vectors;
   }
 
-  Future<List<Session>> getSessions(String patientId) async {
-    final db = await instance.database;
-    final result = await db.query(
-      'sessions',
-      where: 'patientId = ?',
-      whereArgs: [patientId],
-      orderBy: 'startTime DESC',
-    );
-    return result.map((json) => Session.fromMap(json)).toList();
+  Future<int> getLatestFeatureTimestampMs(String patientId) async {
+    await _ready();
+    return int.tryParse(_syncState.get('feature-cursor:$patientId') ?? '') ?? 0;
   }
 
-  // --- Feature Measurements ---
-  Future<void> insertMeasurements(List<FeatureMeasurement> measurements) async {
-    final db = await instance.database;
-    final batch = db.batch();
-    for (var m in measurements) {
-      batch.insert('feature_measurements', m.toMap());
-    }
-    await batch.commit(noResult: true);
+  Future<String?> getServerUrl() async {
+    await _ready();
+    return _syncState.get('server_url');
   }
 
-  Future<List<FeatureMeasurement>> getMeasurements(String patientId, {String? featureName}) async {
-    final db = await instance.database;
-    List<Map<String, dynamic>> result;
-    if (featureName != null) {
-      result = await db.query(
-        'feature_measurements',
-        where: 'patientId = ? AND featureName = ?',
-        whereArgs: [patientId, featureName],
-        orderBy: 'timestamp ASC',
-      );
-    } else {
-      result = await db.query(
-        'feature_measurements',
-        where: 'patientId = ?',
-        whereArgs: [patientId],
-        orderBy: 'timestamp ASC',
-      );
-    }
-    return result.map((json) => FeatureMeasurement.fromMap(json)).toList();
-  }
-
-  Future<List<FeatureMeasurement>> getAllMeasurements() async {
-    final db = await instance.database;
-    final result = await db.query('feature_measurements', orderBy: 'timestamp ASC');
-    return result.map((json) => FeatureMeasurement.fromMap(json)).toList();
-  }
-
-  // --- Baselines ---
-  Future<void> saveBaseline(Baseline baseline) async {
-    final db = await instance.database;
-    // Handle replace using unique index
-    await db.insert(
-      'baselines',
-      baseline.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-  }
-
-  Future<List<Baseline>> getBaselines(String patientId) async {
-    final db = await instance.database;
-    final result = await db.query(
-      'baselines',
-      where: 'patientId = ?',
-      whereArgs: [patientId],
-    );
-    return result.map((json) => Baseline.fromMap(json)).toList();
-  }
-
-  Future<Baseline?> getBaseline(String patientId, String featureName) async {
-    final db = await instance.database;
-    final result = await db.query(
-      'baselines',
-      where: 'patientId = ? AND featureName = ?',
-      whereArgs: [patientId, featureName],
-    );
-    if (result.isNotEmpty) {
-      return Baseline.fromMap(result.first);
-    }
-    return null;
+  Future<void> saveServerUrl(String url) async {
+    await _ready();
+    await _syncState.put('server_url', url);
   }
 }

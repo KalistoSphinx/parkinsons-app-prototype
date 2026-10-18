@@ -1,19 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../database/local_database.dart';
-import '../baseline/baseline_manager.dart';
-import '../sessions/session_manager.dart';
 import '../models/patient.dart';
 
 final databaseProvider = Provider<LocalDatabase>((ref) {
   return LocalDatabase.instance;
-});
-
-final baselineManagerProvider = Provider<BaselineManager>((ref) {
-  return BaselineManager(ref.watch(databaseProvider));
-});
-
-final sessionManagerProvider = Provider<SessionManager>((ref) {
-  return SessionManager(ref.watch(databaseProvider), ref.watch(baselineManagerProvider));
 });
 
 // StateNotifier to hold the currently selected patient
