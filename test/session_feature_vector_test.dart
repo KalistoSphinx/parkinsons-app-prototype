@@ -17,7 +17,9 @@ void main() {
 
     final document = vector.toMap();
 
-    expect(featureColumns, hasLength(8));
+    expect(featureColumns, hasLength(10));
+    expect(featureColumns, contains('fall_detected'));
+    expect(featureColumns, contains('fall_impact_g'));
     expect(featureColumnsByTask['tremor'], contains('tremor_probability'));
     expect(featureColumnsByTask['gait'], contains('arm_swing_rom'));
     expect(document['sessionId'], 'session-1');

@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 
 import '../models/patient.dart';
 import '../providers/app_providers.dart';
+import '../sessions/processing_client.dart';
 import '../theme/app_theme.dart';
 import 'dashboard_screen.dart';
 
@@ -32,6 +33,18 @@ class PatientSelectionScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Participants'),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: ActionChip(
+              avatar: const Icon(Icons.supervisor_account, size: 16),
+              label: const Text('Caretaker Portal'),
+              onPressed: () {
+                ref.read(appRoleProvider.notifier).setRole(AppRole.caretaker);
+              },
+            ),
+          ),
+        ],
       ),
       body: patientsAsyncValue.when(
         data: (patients) {
@@ -148,6 +161,16 @@ class PatientSelectionScreen extends ConsumerWidget {
                             ],
                           ),
                         ),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.delete_outline,
+                            size: 20,
+                            color: AppTheme.textTertiary,
+                          ),
+                          tooltip: 'Delete participant',
+                          onPressed: () => _confirmDeletePatient(context, ref, patient),
+                        ),
+                        const SizedBox(width: 2),
                         const Icon(
                           Icons.chevron_right,
                           color: AppTheme.textTertiary,
@@ -229,6 +252,48 @@ class PatientSelectionScreen extends ConsumerWidget {
           ],
         );
       },
+    );
+  }
+
+  void _confirmDeletePatient(BuildContext context, WidgetRef ref, Patient patient) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text('Delete participant?'),
+        content: Text(
+          'Are you sure you want to delete ${patient.name}? This will remove their local record, session history, and personal baseline.',
+          style: const TextStyle(fontSize: 13, color: AppTheme.textSecondary),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: AppTheme.error),
+            onPressed: () async {
+              Navigator.pop(ctx);
+              final current = ref.read(currentPatientProvider);
+              if (current?.id == patient.id) {
+                ref.read(currentPatientProvider.notifier).clear();
+              }
+              await ref.read(databaseProvider).deletePatient(patient.id);
+              await ProcessingClient().deletePatient(patient.id);
+              ref.invalidate(patientsProvider);
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Participant "${patient.name}" deleted'),
+                    duration: const Duration(seconds: 2),
+                  ),
+                );
+              }
+            },
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parkinson's Disease Continuous Monitoring & Remote Caretaker Alert System</title>
+    <!-- Marked.js for markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Mermaid.js for diagrams -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <!-- KaTeX for math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <style>
+        :root {
+            --primary: #0F766E;
+            --primary-light: #F0FDFA;
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --border: #E2E8F0;
+            --surface: #FFFFFF;
+            --bg: #F8FAFC;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.65;
+            color: var(--text-primary);
+            background-color: var(--bg);
+            margin: 0;
+            padding: 24px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--surface);
+            padding: 48px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            border: 1px solid var(--border);
+        }
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 16px;
+            margin-bottom: 32px;
+        }
+        .brand {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--primary);
+            text-transform: uppercase;
+        }
+        .print-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s;
+        }
+        .print-btn:hover {
+            background: #0D655E;
+        }
+        h1 {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-top: 0;
+            line-height: 1.3;
+            letter-spacing: -0.5px;
+        }
+        h2 {
+            font-size: 19px;
+            font-weight: 700;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+            margin-top: 36px;
+        }
+        h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-top: 24px;
+        }
+        p, li {
+            font-size: 15px;
+            color: #334155;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        th, td {
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+        th {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            font-weight: 700;
+        }
+        tr:nth-child(even) {
+            background-color: #F8FAFC;
+        }
+        code {
+            background-color: #F1F5F9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            font-size: 13px;
+            color: #0F766E;
+        }
+        pre code {
+            display: block;
+            padding: 14px;
+            overflow-x: auto;
+            border-radius: 8px;
+            line-height: 1.5;
+        }
+        .mermaid {
+            margin: 24px 0;
+            text-align: center;
+            background: #FAFAFA;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+                max-width: 100%;
+            }
+            .top-bar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top-bar">
+            <div class="brand">Medical-Grade Continuous Telemetry System</div>
+            <button class="print-btn" onclick="window.print()">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
+                    <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z"/>
+                </svg>
+                Print / Save as PDF
+            </button>
+        </div>
+        <div id="content"></div>
+    </div>
+
+    <script>
+        const markdown = "# Parkinson's Disease Continuous Monitoring & Remote Caretaker Alert System\n## Comprehensive System Documentation & Technical Blueprint\n\n---\n\n## 1. Executive Summary: What This Project Does\n\nThis project is an **end-to-end, medical-grade Parkinson\u2019s Disease (PD) remote monitoring and emergency alert ecosystem**. \n\nIt transforms standard wrist-worn smartwatch and smartphone inertial sensors (accelerometers and gyroscopes) into a continuous diagnostic tool. The system operates autonomously in the background to:\n1. **Calibrate a Personal Baseline**: Learns what \"normal\" motor function looks like for a specific individual (tremor, walking arm swing, and movement vigor).\n2. **Detect Abnormal Motor Changes**: Compares every 3-minute window of everyday movement against that personal baseline using robust statistics and Machine Learning (Isolation Forests).\n3. **Detect Sudden Falls with High Accuracy**: Analyzes impact physics, rotational tumble, and post-fall immobility using a 4-stage biomechanical algorithm.\n4. **Connect Remote Caretakers Over Any Distance**: Pairs a caretaker's phone to the patient's phone using a secure 6-digit one-time code. When a fall or acute motor change occurs, the caretaker's phone sounds a continuous **standard phone alarm ringtone** (even if the app is in the background or the screen is off).\n5. **Track Day-to-Day Motor Progression**: Archives daily observations, date-specific alerts, timestamped caregiver clinical notes, key Parkinson\u2019s readings (Tremor Burden %, Movement Vigor Ratio, Active vs. Rest Ratio), and generates automated weekly and monthly clinical narrative reports.\n\n```mermaid\nflowchart LR\n    A[\"Patient Phone / Watch<br>(Wrist IMU: 50 Hz)\"] -->|\"Sliding 3-Min Windows\"| B[\"Local Android Service<br>(Background Daemon)\"]\n    B -->|\"HTTP /process-session\"| C[\"FastAPI Analytical Engine<br>(ParaDigMa + ML)\"]\n    C -->|\"Baseline Calibration\"| D[(\"Patient Storage<br>JSONL & NPZ\")]\n    C -->|\"Z-Score + Isolation Forest\"| E{\"Anomaly or Fall?\"}\n    E -->|\"Yes (Severity >= Warning)\"| F[\"Alert Engine & Cooldown\"]\n    F -->|\"Emergency Alarm (Stream Alarm)\"| G[\"Caretaker Device<br>(Phone Ringtone & Push)\"]\n    E -->|\"Continuous Feed\"| H[\"Day-by-Day History &<br>Weekly/Monthly Summaries\"]\n```\n\n---\n\n## 2. The Clinical Problem: What Patients & Doctors Face Today\n\n### A. The \"Snapshot Bias\" of In-Clinic Visits\nParkinson\u2019s Disease is inherently **fluctuating**. Symptoms change hour by hour depending on medication timing (the \"ON/OFF\" medication cycle), stress, fatigue, sleep quality, and diet:\n- A patient visits a neurologist once every **3 to 6 months** for a 15-to-30-minute consultation.\n- If the appointment coincides with an \"ON\" phase (medication working well), the doctor sees near-normal motor control.\n- If the appointment falls during an \"OFF\" phase, the symptoms look artificially severe.\n- **Consequence**: Medication dosages (e.g., Levodopa/Carbidopa) are frequently calibrated on unrepresentative \"snapshots,\" leading to either under-medication (stiffness, freezing) or over-medication (involuntary writhing/dyskinesia).\n\n### B. Subjective & Inaccurate Patient Diaries\nDoctors rely heavily on patients or family members filling out paper logs (e.g., \"rate your tremor from 1 to 5 at 2:00 PM\"). Studies show that over **60% of entries in self-reported motor diaries are back-filled from memory or inaccurate**, as patients cannot accurately measure arm swing amplitude, subtle resting tremor duration, or movement vigor.\n\n### C. The Danger of Unnoticed Falls & Living Alone\nPostural instability is one of the most debilitating symptoms of PD:\n- Falls frequently lead to hip fractures, subdural hematomas, and loss of independence.\n- When living alone or resting in another room, a patient who falls may remain immobilized on the floor for hours before anyone realizes something is wrong (\"long lie\" syndrome).\n\n### D. Why One-Size-Fits-All Thresholds Fail\nEvery Parkinson\u2019s patient is biologically unique. A 70-year-old patient who naturally has a mild resting tremor will constantly trigger false alarms on generic commercial smartwatch detectors. Conversely, a patient with mild rigidity might be overlooked entirely. **A system must be personalized to the individual's baseline.**\n\n---\n\n## 3. How This Solution Solves the Problem\n\n| Traditional Clinical Reality | This System's Solution |\n|---|---|\n| 15-minute appointment every 3 months | **24/7 continuous passive tracking** at 50 Hz during daily living. |\n| Subjective patient memory & paper diaries | **Objective mathematical feature extraction** (spectral tremor power, arm swing range of motion, acceleration RMS). |\n| Delayed discovery of accidents | **Immediate loud alarm on Caretaker\u2019s phone** via long-range connection. |\n| False alarms from generic population thresholds | **Personal Baseline Calibration**: Anomaly detection tests whether the patient has deviated from *their own calibrated healthy state*. |\n| Fragmented clinical notes | **Centralized chronological records**: Date-specific observations, category-tagged clinical notes (`Medication`, `Symptoms`, `Mobility`), and automated clinical narrative summaries. |\n\n---\n\n## 4. End-to-End System Architecture\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor P as Patient (Wrist)\n    participant S as Android Background Service\n    participant B as Backend Analytical Server\n    actor C as Caretaker (Remote)\n\n    P->>S: 50 Hz Accel + Gyro Data\n    Note over S: Collects 3-minute batch (9,000 samples)\n    S->>B: POST /process-session (Raw IMU JSON)\n    Note over B: 1. Resample to strict 50 Hz<br>2. ParaDigMa Tremor & Gait Extraction<br>3. 4-Stage Fall Detection<br>4. Robust Z-Score + Isolation Forest\n    alt Fall Detected or Severe Anomaly\n        B->>B: Create Alert in _alerts.jsonl\n        C->>B: Continuous Polling / Active Status\n        B-->>C: Return Active Alert Map\n        Note over C: Triggers Android STREAM_ALARM<br>Plays Standard Phone Alarm Ringtone\n        C->>B: POST /alerts/{id}/ack (Acknowledge)\n        Note over C: Alarm stops ringing, banner updates\n    else Normal Telemetry\n        B->>B: Update Daily Feature Store & History\n        B-->>S: 200 OK + Symptom Labels\n    end\n```\n\n---\n\n## 5. Detailed Breakdown of Every Feature\n\n### 5.1 Dual Profile Architecture: Patient vs. Caretaker\nThe application provides two tailored operational modes:\n- **Patient Profile**:\n  - Focuses on non-intrusive monitoring.\n  - Controls to start/stop baseline collection and anomaly monitoring.\n  - Access to personal baseline details and the **Load Test Baseline** feature.\n  - Generates a **6-Digit One-Time Pairing Code** to securely link a remote caretaker.\n  - Displays today's clinical status (Tremor, Gait, Vigor, Fall monitoring).\n  - Ability to **shut down any false-positive alert** directly from the patient device.\n- **Caretaker Profile**:\n  - Displays real-time online/offline connectivity of the patient.\n  - Prominent red **Emergency Alarm Banner** with instant \"Silence\" and \"Acknowledge\" buttons.\n  - Automatically triggers background audio and notifications when emergency events happen.\n  - Full access to the patient's day-by-day historical observations, clinical readings, clinical notes, and weekly/monthly summaries.\n\n### 5.2 Long-Range Remote Pairing\nUnlike Bluetooth or local Wi-Fi pairing (which stops working once the caretaker leaves the house), this system connects devices over the cloud:\n1. Patient generates a 6-digit code (e.g. `481-902`) valid for 15 minutes.\n2. Caretaker enters the code along with their name (e.g. `Dr. John` or `Sarah`).\n3. The server pairs both profiles permanently until unpaired. The caretaker receives alerts from anywhere with an internet connection.\n\n### 5.3 Personal Baseline System\nBefore anomaly detection can operate reliably, the app builds a personal baseline:\n- Collects reference intervals while the patient is in their standard, stable motor state.\n- Tracks feature distributions: Median, Mean, Standard Deviation, Min, Max, and Median Absolute Deviation (MAD).\n- Once calibrated (5 or more intervals), the baseline can be **frozen**. Future movement is compared against these frozen values.\n- Includes a **Load Test Baseline** feature: Ingests clinical sample reference intervals immediately for demonstration, calibration testing, and review.\n\n### 5.4 The Emergency Alarm & Background Audio System\nWhen an acute fall or critical anomaly is detected:\n1. The Caretaker's phone triggers an Android Foreground Service (`CaretakerMonitoringService`).\n2. Even if the phone is locked, asleep, or in another app, the system switches audio routing to `AudioAttributes.USAGE_ALARM` on the device's **Alarm Stream (`STREAM_ALARM`)**.\n3. It plays the patient's **standard default phone alarm ringtone** at normal alarm volume (not a gentle notification chime), ensuring the caregiver wakes up if the patient falls at night.\n4. A high-priority heads-up notification with action buttons allows the caregiver to **Silence Ringtone** or **Acknowledge Alert**.\n\n### 5.5 Day-to-Day Tracking & Historical Calendar\n- Every monitored date is saved in durable JSON files (`YYYY-MM-DD_{timestamp}_{session_id}.json`).\n- An interactive date navigator bar allows stepping through days (`<`, `>`) or opening a calendar picker to view motor status from any past date.\n- Displays processed session counts, total minutes monitored, and date-specific alert history.\n\n### 5.6 Key Clinical Parkinson's Readings\nFor any selected date, the system computes four quantitative Parkinson's indicators:\n1. **Rest Tremor Burden (%)**: The percentage of active monitoring time during which resting tremor probability exceeded baseline limits.\n2. **Movement Vigor Ratio**: Ratio of the patient's dynamic acceleration RMS compared to their personal baseline median. A ratio below $0.8\\times$ indicates hypokinesia/bradykinesia (slowness and small amplitude of movement).\n3. **Active Mobility vs. Rest Ratio (%)**: Percentage of the day spent in active physical motion versus sedentary rest periods.\n4. **Fall Triggers**: The exact count of abrupt deceleration impact events recorded on that day.\n\n### 5.7 Persistent Clinical Notes System\nCaretakers and patients can record timestamped clinical notes associated with specific dates:\n- **Category Tags**: Multi-select tags (`Medication`, `Symptoms`, `Mobility`, `Fatigue`, `Nutrition`, `General`).\n- **Author Attribution**: Distinguishes notes logged by the patient from those logged by the caretaker.\n- **Thread-Safe Storage**: Persisted in `_notes.json` under atomic locks.\n\n### 5.8 Weekly & Monthly Summaries & Clinical Narratives\n- **Window Switcher**: Toggle between **7-Day (Weekly)** and **30-Day (Monthly)** views.\n- **Trajectory Classification**: Overall motor trajectory label (`Stable Motor Function`, `Elevated Tremor Activity`, `Gait / Arm Swing Irregularity`, `Reduced Movement Vigor`, or `Elevated Fall Risk`).\n- **Automated Clinical Narrative**: A generated, readable paragraph summarizing adherence, total hours monitored, symptom frequency, and fall counts across the period.\n- **Day-by-Day Trend Timeline**: A reverse-chronological list of daily breakdown cards. Tapping any day opens the full sensor report for that day.\n\n---\n\n## 6. Technology Stack\n\n### Mobile Frontend (Android / Flutter)\n- **Flutter & Dart**: Cross-platform UI framework with custom Material 3 medical-grade design tokens.\n- **Flutter Riverpod**: Reactive state management handling patient pairing, alert synchronization, and role profiles.\n- **Hive CE**: High-performance local embedded NoSQL database for caching feature vectors and alerts offline.\n\n### Android Native Core (Kotlin)\n- **`DayMonitoringService.kt`**: Foreground Service with `PARTIAL_WAKE_LOCK` capturing continuous 50 Hz 3-axis accelerometer and gyroscope streams via Android's `SensorManager`.\n- **`CaretakerMonitoringService.kt`**: Continuous background service on the caretaker phone listening for urgent health alerts.\n- **`EmergencyNotificationHelper.kt`**: Creates high-priority notification channels, heads-up notifications, and manages `RingtoneManager.TYPE_ALARM` audio playback through `AudioAttributes.USAGE_ALARM`.\n- **`EmergencyActionReceiver.kt`**: Handles Android notification action intents (Silence / Acknowledge) without requiring the app to open.\n\n### Backend Analytical Engine (Python)\n- **FastAPI**: Asynchronous high-throughput REST API with Pydantic schema validation.\n- **Uvicorn**: Lightning-fast ASGI production web server.\n- **NumPy & SciPy**: High-performance numerical computing for sensor resampling, DC gravity filtering, RMS calculation, and 3D vector orientation math.\n- **Scikit-learn**: Isolation Forest multivariate anomaly model training, scoring, and percentile thresholding.\n- **Pandas**: Structured time-series feature aggregation and alignment.\n- **ParaDigMa Framework**: Clinical Parkinson\u2019s Disease movement feature extractor.\n\n---\n\n## 7. How Anomaly Detection & the Isolation Forest Work\n\nThe anomaly detection engine uses a **two-stage architecture**. A generic Machine Learning model often functions as a \"black box\" that outputs an unexplained score. In clinical medicine, doctors need to know **which exact symptom changed**.\n\n```mermaid\nflowchart TD\n    A[\"Raw IMU Sensor Window (3 Minutes)\"] --> B[\"Resample & Clean (50 Hz)\"]\n    B --> C[\"Extract Movement Features<br>(Tremor, Gait, Arm Swing, Accel RMS, Gyro RMS)\"]\n    C --> D{\"Context Gating\"}\n    D -->|\"Patient Walking\"| E[\"Evaluate Walking Features<br>(Arm Swing ROM, Velocity, Vigor)\"]\n    D -->|\"Patient at Rest\"| F[\"Evaluate Rest Features<br>(Tremor Probability, Power, Time)\"]\n    E & F --> G[\"Stage 1: Direction-Aware Robust Z-Score<br>(Median / MAD vs. Personal Baseline)\"]\n    G --> H{\"Baseline >= 20 intervals?\"}\n    H -->|\"No\"| I[\"Output Univariate Explainable Alerts\"]\n    H -->|\"Yes\"| J[\"Stage 2: Isolation Forest Corroborator<br>(200 Estimators on Multi-Feature Vector)\"]\n    J --> K{\"Multivariate Score >= 0.95?\"}\n    K -->|\"Yes\"| L[\"Escalate Borderline 'Watch' to 'Warning'\"]\n    K -->|\"No\"| I\n```\n\n### Stage 1: Direction-Aware Robust Z-Scores (Univariate)\n\nStandard Z-scores ($Z = \\frac{x - \\mu}{\\sigma}$) are heavily distorted by extreme outliers because the mean ($\\mu$) and standard deviation ($\\sigma$) are sensitive to extreme values.\n\nInstead, this system uses **Robust Statistics**:\n- **Median ($\\tilde{x}$)**: Replaces the mean. Represents the patient's typical baseline.\n- **Median Absolute Deviation (MAD)**: Replaces standard deviation:\n  $$\\text{MAD} = \\text{median}(|x_i - \\tilde{x}|)$$\n- The equivalent robust standard deviation is:\n  $$\\hat{\\sigma} = 1.4826 \\times \\text{MAD}$$\n\n#### Direction Sensitivity\nIn Parkinson's, different symptoms have opposite \"bad\" directions:\n- **High is Bad** ($\\text{direction} = +1$): Rest Tremor Probability, Tremor Power, Tremor Duration. Higher numbers mean more severe tremor.\n- **Low is Bad** ($\\text{direction} = -1$): Arm Swing Range of Motion, Arm Swing Peak Velocity, Movement Vigor. Lower numbers mean stiffer, slower, more hypokinetic movement.\n\n$$\\text{Robust } Z = \\text{direction} \\times \\frac{x - \\text{median}}{\\max(\\hat{\\sigma}, \\text{NoiseFloor})}$$\n\n#### The Observed Range Gate\nTremor data is zero-inflated (most minutes have 0 tremor, while a few have tremor). This can make the MAD very small. If the patient has an occasional slight tremor, a standard formula might treat it as a huge outlier. \nThe system enforces an **observed range gate**: If a value is within the patient\u2019s historical minimum and maximum observed during baseline calibration, it is not flagged as a new anomaly.\n\n---\n\n### Stage 2: Isolation Forest (Multivariate Second Opinion)\n\nWhen the patient has accumulated 20 or more baseline intervals, an **Isolation Forest** model (`n_estimators=200`, `contamination=0.05`) is trained on the patient's 4-dimensional core vector:\n$$\\mathbf{v} = [\\text{tremor\\_probability},\\, \\text{gait\\_probability},\\, \\text{accel\\_rms},\\, \\text{gyro\\_rms}]$$\n\n#### How Isolation Forest Works in Simple Terms\nImagine you have a crowd of people. Most people have normal heights, arm lengths, and walking speeds. If one person has a very unusual combination (e.g., high acceleration but near-zero arm swing and elevated tremor), how many random questions would it take to isolate them from the rest of the crowd?\n- **Normal points**: Require many random splits to isolate (deep in the decision trees).\n- **Anomalies**: Require very few splits to isolate (short path lengths).\n\n```\nNormal Data Point:\n  Root -> Split 1 -> Split 2 -> Split 3 -> ... -> Split 12 (Isolated)  [Long Path]\n\nAnomalous Data Point:\n  Root -> Split 1 -> Split 2 (Isolated!)                              [Short Path]\n```\n\nThe Isolation Forest calculates the average path length across 200 random binary trees:\n$$s(x, n) = 2^{-\\frac{E(h(x))}{c(n)}}$$\nWhere $E(h(x))$ is the expected tree depth and $c(n)$ is the average depth of an unsuccessful search.\n\n#### The \"Corroborator\" Rule\nIn this system, **the Isolation Forest never creates an alert by itself**. Why? Because a black-box anomaly score cannot explain to a doctor *what* is wrong. Instead:\n- If Robust Z-score flags a borderline deviation (severity = `watch`), and the Isolation Forest confirms that the multi-dimensional pattern is in the top 95th percentile of abnormality (`if_score >= 0.95`), the system escalates the severity to `warning`.\n- This ensures **every single alert remains explainable** with concrete clinical drivers (e.g., *\"Arm swing was $2.8\\sigma$ below your usual baseline\"*).\n\n---\n\n## 8. How Alerts Are Generated: Processing & Comparison Pipeline\n\n### Step 1: Raw Sensor Capture\nThe smartphone or smartwatch accelerometer ($x, y, z$ in $g$) and gyroscope ($x, y, z$ in $\\text{deg/s}$) capture movement at 50 samples per second. Every 3 minutes, 9,000 samples are packaged and uploaded.\n\n### Step 2: Resampling & Normalization\nTo handle Android hardware clock jitter, the backend resamples the time series onto a uniform 50 Hz grid using linear interpolation. Per-axis DC gravity components are removed using mean subtraction to isolate dynamic movement from tilt.\n\n### Step 3: Biomechanical 4-Stage Fall Detection\nBefore statistical anomaly scoring, the window is checked by an acute fall detector:\n1. **Free-Fall Dip**: Total acceleration magnitude $|a| = \\sqrt{a_x^2 + a_y^2 + a_z^2}$ drops below $0.55g$ for at least 2 samples within 0.8 seconds before impact (body falling freely).\n2. **Impact Deceleration Peak**: Acceleration spikes to $|a| \\ge 3.0g$ while angular velocity $|\\omega| \\ge 2.0\\text{ rad/s}$ ($115^\\circ/\\text{s}$, indicating a tumble).\n3. **Posture Orientation Shift**: The 3D orientation angle of the phone shifts by $\\ge 35^\\circ$ between pre-impact and post-impact gravity vectors:\n   $$\\cos\\theta = \\frac{\\mathbf{v}_{\\text{pre}} \\cdot \\mathbf{v}_{\\text{post}}}{\\|\\mathbf{v}_{\\text{pre}}\\| \\|\\mathbf{v}_{\\text{post}}\\|}$$\n   *(Prevents false alarms from setting the phone down flat on a desk).*\n4. **Post-Impact Immobility**: After the impact ($+0.5\\text{s}$ to $+2.5\\text{s}$), the motion ceases ($\\text{std}(|a|) < 0.35g$ and $\\text{mean}(|\\omega|) < 1.2\\text{ rad/s}$), indicating the person is lying still.\n\nIf all 4 conditions match, an immediate **`critical` Fall Alert** is triggered.\n\n### Step 4: Context Gating\nFeatures are split by activity state:\n- If arm swing is detected or gait probability $\\ge 0.5$, the interval is tagged as `walking`. Arm swing amplitude and walking speed are compared against the walking baseline.\n- If not walking, the interval is tagged as `rest`. Tremor probability and power are compared against the resting baseline.\n\n### Step 5: Severity Thresholds & The Alert Engine\nA deviation is categorized based on its Robust Z-score:\n\n| Robust Z Score | Severity | Alert Engine Action |\n|---|---|---|\n| $Z < 2.0$ | **Normal** | Logged as healthy telemetry. No notification. |\n| $2.0 \\le Z < 2.5$ | **Watch** | Borderline change. Logged in timeline. Escalated to Warning if Isolation Forest score $\\ge 0.95$. |\n| $2.5 \\le Z < 3.5$ | **Warning** | **Generates an alert.** Pushed to Caretaker portal. |\n| $Z \\ge 3.5$ or **Fall** | **Critical** | **Immediate Emergency Alert.** Caretaker phone sounds loud alarm ringtone. |\n\n#### Spam Suppression & Escalation Rules\n- **Cooldown (60 Seconds)**: An ongoing unchanged symptom will not spam the caretaker with repetitive notifications every few seconds.\n- **Material Escalation Bypass**: If a symptom suddenly worsens (e.g., Z-score increases by $\\ge 20\\%$ and at least $+1.0\\sigma$), the cooldown is bypassed immediately.\n- **Auto-Resolution**: If 3 consecutive intervals return to normal, the alert is automatically closed.\n\n---\n\n## 9. How Patient Status is Classified & Displayed\n\nThe user interface translates complex math into intuitive, color-coded medical badges:\n\n### 1. Instant Symptom Classifications (Today's Observations)\n- **Tremor**:\n  - `Normal`: Within personal baseline ($Z < 2.0$).\n  - `Mild / Watch`: Subtle resting tremor ($2.0 \\le Z < 2.5$).\n  - `Moderate / Warning`: Evident tremor above baseline ($2.5 \\le Z < 3.5$).\n  - `Severe / Critical`: Intense, sustained resting tremor ($Z \\ge 3.5$).\n- **Gait & Arm Swing**:\n  - `Normal`: Symmetrical, standard arm swing amplitude.\n  - `Reduced Arm Swing`: Significant loss of swing amplitude on the monitored wrist.\n- **Movement Vigor (Bradykinesia Proxy)**:\n  - `Normal`: Dynamic acceleration energy matches baseline.\n  - `Reduced Vigor`: Acceleration energy $< 0.8\\times$ baseline median (slowness of movement).\n- **Fall Monitoring**:\n  - `Normal`: Zero impact triggers.\n  - `FALL DETECTED`: Active unacknowledged emergency fall.\n  - `Fall Acknowledged`: Caretaker or patient has verified and cleared the incident.\n\n### 2. Period Trajectory Classifications (Weekly & Monthly)\nWhen reviewing the 7-day or 30-day summaries, the patient's overarching state is synthesized:\n\n```mermaid\nflowchart TD\n    Start[\"Period Summary Aggregator\"] --> Q1{\"Any fall incidents?\"}\n    Q1 -->|\"Yes (Count >= 1)\"| T1[\"Elevated Fall Risk (Critical)\"]\n    Q1 -->|\"No\"| Q2{\"Tremor on >= 50% active days?\"}\n    Q2 -->|\"Yes\"| T2[\"Elevated Tremor Activity (Warning)\"]\n    Q2 -->|\"No\"| Q3{\"Gait issues on >= 50% active days?\"}\n    Q3 -->|\"Yes\"| T3[\"Gait / Arm Swing Irregularity (Warning)\"]\n    Q3 -->|\"No\"| Q4{\"Reduced vigor on >= 50% active days?\"}\n    Q4 -->|\"Yes\"| T4[\"Reduced Movement Vigor (Warning)\"]\n    Q4 -->|\"No\"| Q5{\"Zero days monitored?\"}\n    Q5 -->|\"Yes\"| T5[\"No Recent Monitoring (Normal)\"]\n    Q5 -->|\"No\"| T6[\"Stable Motor Function (Normal)\"]\n```\n\n---\n\n## 10. Summary Checklist of System Capabilities\n\n- [x] **Continuous Background Sensing**: 50 Hz IMU monitoring with Foreground Services and battery wake-locks.\n- [x] **Personalized Reference Baseline**: Learns individual motor patterns instead of using inaccurate population averages.\n- [x] **Two-Stage Anomaly Detection**: Explainable direction-aware Robust Z-Scores combined with multivariate Isolation Forests.\n- [x] **High-Precision Fall Detection**: 4-stage biomechanical analysis (free fall, impact peak, orientation shift, immobility).\n- [x] **Long-Range Cloud Pairing**: 6-digit one-time codes link Caretakers and Patients across any geographical distance.\n- [x] **Loud Emergency Alarms**: Caretaker phone sounds the standard phone alarm ringtone even in background/locked states.\n- [x] **Patient Control**: Ability to review baseline calibration, load test data, and dismiss false-positive alerts.\n- [x] **Longitudinal Day-by-Day Tracking**: Date navigation, symptoms breakdown, and date-filtered alerts.\n- [x] **Key Quantitative Parkinson's Metrics**: Rest Tremor Burden %, Movement Vigor Ratio, Active vs. Rest Ratio, Fall counts.\n- [x] **Integrated Clinical Notes**: Category-tagged caregiver observations attached to specific dates.\n- [x] **Automated Clinical Narratives**: Dynamic weekly and monthly medical reports for physician consultations.\n- [x] **Lightweight Release Build**: Unused libraries and fonts stripped; optimized 64-bit release APK built and running on physical devices.\n";
+        document.getElementById('content').innerHTML = marked.parse(markdown);
+
+        mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            renderMathInElement(document.getElementById('content'), {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\(', right: '\)', display: false},
+                    {left: '\[', right: '\]', display: true}
+                ],
+                throwOnError: false
+            });
+        });
+    </script>
+</body>
+</html>

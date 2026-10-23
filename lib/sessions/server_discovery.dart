@@ -14,6 +14,10 @@ class ServerDiscovery {
 
   String? get cachedUrl => _cachedUrl;
 
+  void invalidateCachedUrl() {
+    _cachedUrl = null;
+  }
+
   Future<bool> checkHealth(
     String baseUrl, {
     Duration timeout = const Duration(milliseconds: 1000),
@@ -38,9 +42,7 @@ class ServerDiscovery {
 
   Future<String> discoverServerUrl({bool forceScan = false}) async {
     if (!forceScan && _cachedUrl != null && _cachedUrl!.isNotEmpty) {
-      if (await checkHealth(_cachedUrl!)) {
-        return _cachedUrl!;
-      }
+      return _cachedUrl!;
     }
 
     // 1. Check database/cache

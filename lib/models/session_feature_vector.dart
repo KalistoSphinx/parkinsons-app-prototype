@@ -9,6 +9,8 @@ const List<String> featureColumns = [
   'arm_swing_peak_velocity',
   'accel_rms_m_s2',
   'gyro_rms_rad_s',
+  'fall_detected',
+  'fall_impact_g',
 ];
 
 /// ParaDigMa task outputs differ by task, so future anomaly models should be
@@ -35,12 +37,15 @@ class SessionFeatureVector {
   final String sessionId;
   final DateTime timestamp;
   final String taskType;
+  final String monitoringMode;
   final Map<String, double?> features;
   final bool qualityPassed;
   final String baselineStatus;
   final String processingMessage;
   final String sourceLabel;
   final Map<String, String> symptomLabels;
+  final Map<String, dynamic>? anomaly;
+  final List<String> alertIds;
 
   const SessionFeatureVector({
     required this.patientId,
@@ -49,10 +54,13 @@ class SessionFeatureVector {
     required this.taskType,
     required this.features,
     required this.qualityPassed,
+    this.monitoringMode = 'baseline',
     this.baselineStatus = 'included',
     this.processingMessage = '',
     this.sourceLabel = 'device-session',
     this.symptomLabels = const {},
+    this.anomaly,
+    this.alertIds = const [],
   });
 
   Map<String, dynamic> toMap() => {
@@ -60,11 +68,14 @@ class SessionFeatureVector {
     'sessionId': sessionId,
     'timestamp': timestamp.toIso8601String(),
     'taskType': taskType,
+    'monitoringMode': monitoringMode,
     'qualityPassed': qualityPassed,
     'baselineStatus': baselineStatus,
     'processingMessage': processingMessage,
     'sourceLabel': sourceLabel,
     'symptomLabels': symptomLabels,
+    'anomaly': anomaly,
+    'alertIds': alertIds,
     ...{for (final name in featureColumns) name: features[name]},
   };
 
@@ -86,12 +97,20 @@ class SessionFeatureVector {
       sessionId: sessionId,
       timestamp: timestamp,
       taskType: taskType,
+      monitoringMode: (map['monitoringMode'] ?? map['monitoring_mode']) as String? ??
+          'baseline',
       qualityPassed: qualityPassed,
       baselineStatus: (map['baselineStatus'] ?? map['baseline_status']) as String? ??
           (qualityPassed ? 'included' : 'excluded'),
       processingMessage: (map['processingMessage'] ?? map['quality_message']) as String? ?? '',
       sourceLabel: map['sourceLabel'] as String? ?? 'continuous-device-monitoring',
       symptomLabels: labels.map((key, value) => MapEntry(key.toString(), value.toString())),
+      anomaly: (map['anomaly'] as Map?)?.cast<String, dynamic>(),
+      alertIds: (map['alertIds'] ?? map['alert_ids']) is List
+          ? ((map['alertIds'] ?? map['alert_ids']) as List)
+              .map((value) => value.toString())
+              .toList()
+          : const [],
       features: {
         for (final name in featureColumns)
           name: rawFeatures[name] == null ? null : (rawFeatures[name] as num).toDouble(),
@@ -105,11 +124,14 @@ class SessionFeatureVector {
         sessionId: sessionId,
         timestamp: timestamp,
         taskType: taskType,
+        monitoringMode: monitoringMode,
         features: features,
         qualityPassed: qualityPassed,
         baselineStatus: baselineStatus ?? this.baselineStatus,
         processingMessage: processingMessage,
         sourceLabel: sourceLabel,
         symptomLabels: symptomLabels,
+        anomaly: anomaly,
+        alertIds: alertIds,
       );
 }

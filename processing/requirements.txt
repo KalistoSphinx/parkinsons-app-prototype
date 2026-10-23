@@ -1,3 +1,5 @@
 fastapi>=0.115,<1
 uvicorn[standard]>=0.34,<1
 paradigma==1.1.2
+scikit-learn>=1.6,<2
+joblib>=1.4,<2
